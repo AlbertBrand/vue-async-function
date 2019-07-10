@@ -1,6 +1,6 @@
 {
   "name": "vue-async-function",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vue.js async function helper",
   "main": "./dist/index.js",
   "browser": "./lib/index.js",
