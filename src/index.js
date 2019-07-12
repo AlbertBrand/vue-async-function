@@ -11,9 +11,9 @@ import { value, onCreated, onBeforeDestroy } from "vue-function-api";
  * @returns {object} Object literal containing `isLoading`, `error` and `data` value wrappers.
  */
 export function useAsync(promiseFn, params) {
-  let isLoading = value(true);
-  let error = value(null);
-  let data = value(null);
+  const isLoading = value(true);
+  const error = value(null);
+  const data = value(null);
   let controller = null;
 
   onCreated(async () => {

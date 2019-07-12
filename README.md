@@ -10,13 +10,13 @@ Thanks to the [Vue Function API](https://github.com/vuejs/vue-function-api) plug
 In your Vue 2.x project, you'll need to install `vue-function-api` together with `vue-async-function`:
 
 ```bash
-npm install --save vue-function-api vue-async-helper
+npm install --save vue-function-api vue-async-function
 ```
 
 Or with Yarn:
 
 ```bash
-yarn add vue-function-api vue-async-helper
+yarn add vue-function-api vue-async-function
 ```
 
 Then modify your entrypoint (often `main.js` or `main.ts`), as stated in the [Vue Function API docs](https://github.com/vuejs/vue-function-api/blob/master/README.md#usage):
