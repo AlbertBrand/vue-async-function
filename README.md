@@ -1,7 +1,31 @@
-# vue-async-function
+<p align="center">
+  <a href="https://github.com/AlbertBrand/vue-async-function"><img src="./img/vue-async-function.png" width="469" alt="Vue Async Function" /></a>
+</p>
+<br/>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/vue-async-function">
+    <img src="https://img.shields.io/npm/v/vue-async-function.svg" alt="npm version">
+  </a>
+  <a href="https://www.npmjs.com/package/vue-async-function">
+    <img src="https://img.shields.io/npm/dm/vue-async-function.svg" alt="npm downloads">
+  </a>
+  <a href="https://bundlephobia.com/result?p=vue-async-function">
+    <img src="https://img.shields.io/bundlephobia/min/vue-async-function.svg" alt="minified size">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/npm/l/vue-async-function.svg" alt="license">
+  </a>
+  <a href="https://github.com/ghengeveld/vue-async-function/issues">
+    <img src="https://img.shields.io/github/issues/AlbertBrand/vue-async-function.svg" alt="issues">
+  </a>
+  <a href="https://github.com/ghengeveld/vue-async-function/pulls">
+    <img src="https://img.shields.io/github/issues-pr/AlbertBrand/vue-async-function.svg" alt="pull requests">
+  </a>
+</p>
 
 Thanks to the [Vue Function API](https://github.com/vuejs/vue-function-api) plugin you can enjoy building next
-generation Vue apps today with Vue2.x. `vue-async-function` builds upon the Function API and brings you simple helpers
+generation Vue apps today with Vue2.x. Vue Async Function builds upon the Function API and brings you simple helpers
 to handle all your asynchronous needs, in a similar fashion to the hooks functions of
 [React Async](https://github.com/ghengeveld/react-async).
 
