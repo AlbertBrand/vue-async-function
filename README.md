@@ -1,6 +1,9 @@
 # vue-async-function
 
-Thanks to the [Vue Function API](https://github.com/vuejs/vue-function-api) plugin you can enjoy building next generation Vue apps today with Vue2.x. `vue-async-function` builds upon the Function API and brings you simple helpers to handle all your asynchronous needs, in a similar fashion to [React Async](https://github.com/ghengeveld/react-async).
+Thanks to the [Vue Function API](https://github.com/vuejs/vue-function-api) plugin you can enjoy building next
+generation Vue apps today with Vue2.x. `vue-async-function` builds upon the Function API and brings you simple helpers
+to handle all your asynchronous needs, in a similar fashion to the hooks functions of
+[React Async](https://github.com/ghengeveld/react-async).
 
 - Works with promises, async/await and the Fetch API
 - Supports abortable fetch by providing an AbortController signal
@@ -19,7 +22,8 @@ Or with Yarn:
 yarn add vue-function-api vue-async-function
 ```
 
-Then modify your entrypoint (often `main.js` or `main.ts`), as stated in the [Vue Function API docs](https://github.com/vuejs/vue-function-api/blob/master/README.md#usage):
+Then modify your entrypoint (often `main.js` or `main.ts`), as stated in the
+[Vue Function API docs](https://github.com/vuejs/vue-function-api/blob/master/README.md#usage):
 
 ```javascript
 import Vue from "vue";
@@ -133,3 +137,6 @@ Inside your `setup()` function you can retrieve the three reactive properties an
   };
 </script>
 ```
+
+See the [vue-async-function-examples](https://github.com/AlbertBrand/vue-async-function-examples) repo for a demo
+project with all examples.
