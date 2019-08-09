@@ -62,13 +62,45 @@ After that, you can import `useAsync` and `useFetch`:
 import { useAsync, useFetch } from "vue-async-function";
 ```
 
-Inside your `setup()` function you can retrieve the three reactive properties and return them to use in your template:
+Inside your `setup()` function you retrieve three reactive properties and return them to use in your template.
+You also get two functions, `retry` and `abort` that respectively retry the original function or abort the current
+running function. Retrying a function while the original asynchronous function is still running aborts it.
 
 ```javascript
   setup() {
-    const { data, error, isLoading } = useAsync(someAsyncFunc);
+    const { data, error, isLoading, retry, abort } = useAsync(someAsyncFunc);
     // ...
-    return { data, error, isLoading };
+    return { data, error, isLoading, retry, abort };
+  }
+```
+
+The second argument of `useFetch` is passed as first argument to the promise.
+
+```javascript
+  setup() {
+    return useAsync(someAsyncFunc, { id: 9000 });
+  }
+```
+
+If you want your application to reactively respond to changing input values for `useAsync` or `useFetch`, you can pass
+in a `ValueWrapper` value as well as any parameter.
+
+```javascript
+  import { value } from "vue-function-api";
+  // ...
+
+  setup() {
+    const wrappedAsyncFunc = value(someAsyncFunc);
+    const wrappedParams = value({ id: 9000 });
+    const { data, error, isLoading, retry, abort } = useAsync(someAsyncFunc);
+    // ...
+    watch(someVal, () => {
+      wrappedAsyncFunc.value = async () => {}; // triggers retry
+      // or
+      wrappedParams.value = { id: 10000 } // triggers retry
+    })
+    // ...
+    return { data, error, isLoading, retry, abort };
   }
 ```
 
@@ -89,17 +121,13 @@ Inside your `setup()` function you can retrieve the three reactive properties an
 
   async function wait({ millis }) {
     return new Promise(resolve => {
-      setTimeout(function() {
-        resolve(`Done waiting ${millis} milliseconds!`);
-      }, millis);
+      setTimeout(() => resolve(`Done waiting ${millis} milliseconds!`), millis);
     });
   }
 
   export default {
     setup() {
-      const { data, error, isLoading } = useAsync(wait, { millis: 2000 });
-      // ...
-      return { data, error, isLoading };
+      return useAsync(wait, { millis: 2000 });
     }
   };
 </script>
@@ -109,6 +137,8 @@ Inside your `setup()` function you can retrieve the three reactive properties an
 
 ```html
 <template>
+  <button @click="retry" :disabled="isLoading">Retry</button>
+  <button @click="abort" :disabled="!isLoading">Abort</button>
   <div v-if="isLoading">Loading...</div>
   <div v-else-if="error">Error!</div>
   <pre v-else>{{ data }}</pre>
@@ -123,15 +153,13 @@ Inside your `setup()` function you can retrieve the three reactive properties an
       headers,
       signal
     });
-    if (!res.ok) throw new Error(res);
+    if (!res.ok) throw res;
     return res.json();
   }
 
   export default {
     setup() {
-      const { data, error, isLoading } = useAsync(loadStarship, { id: 2 });
-      // ...
-      return { data, error, isLoading };
+      return useAsync(loadStarship, { id: 2 });
     }
   };
 </script>
@@ -141,6 +169,8 @@ Inside your `setup()` function you can retrieve the three reactive properties an
 
 ```html
 <template>
+  <button @click="retry" :disabled="isLoading">Retry</button>
+  <button @click="abort" :disabled="!isLoading">Abort</button>
   <div v-if="isLoading">Loading...</div>
   <div v-else-if="error">Error!</div>
   <pre v-else>{{ data }}</pre>
@@ -154,9 +184,54 @@ Inside your `setup()` function you can retrieve the three reactive properties an
       const id = 9;
       const url = `https://swapi.co/api/starships/${id}/`;
       const headers = { Accept: "application/json" };
-      const { data, error, isLoading } = useFetch(url, { headers });
-      // ...
-      return { data, error, isLoading };
+      return useFetch(url, { headers });
+    }
+  };
+</script>
+```
+
+## `useAsync` example with wrapped values
+
+```html
+<template>
+  <div id="root">
+    <h2>useAsync and promises, with value</h2>
+    <button @click="retry">Retry</button>
+    <button @click="abort">Abort</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-else-if="error">Error!</div>
+    <pre v-else>{{ data }}</pre>
+  </div>
+</template>
+
+<script>
+  import { useAsync } from "vue-async-function";
+  import { value, watch } from "vue-function-api";
+
+  async function wait({ millis }, signal) {
+    return new Promise(resolve => {
+      const timeout = setTimeout(
+        () => resolve(`Done waiting ${millis} milliseconds!`),
+        millis
+      );
+      signal.addEventListener("abort", () => clearTimeout(timeout));
+    });
+  }
+
+  export default {
+    setup(props) {
+      const wrapParams = value();
+      // watch incoming props change
+      watch(
+        () => props.ms,
+        millis => {
+          wrapParams.value = { millis };
+        }
+      );
+      return useAsync(wait, wrapParams);
+    },
+    props: {
+      ms: { type: Number, required: true }
     }
   };
 </script>
