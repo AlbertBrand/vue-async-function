@@ -1,2 +1,5 @@
-.babelrc
+/coverage
+/img
+/tests
 .eslintrc.js
+babel.config.js

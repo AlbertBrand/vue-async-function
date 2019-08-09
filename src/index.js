@@ -42,7 +42,7 @@ export function useAsync(promiseFn, params) {
 
   function retry() {
     // unwrap the original promise as it is optionally wrapped
-    const origPromiseFn = isWrapped(promiseFn) ? promiseFn.value : promiseFn;
+    const origPromiseFn = wrapPromiseFn.value;
     // create a new promise and trigger watch
     wrapPromiseFn.value = async (params, signal) =>
       origPromiseFn(params, signal);
@@ -64,9 +64,7 @@ export function useAsync(promiseFn, params) {
     }
   });
 
-  onBeforeDestroy(() => {
-    abort();
-  });
+  onBeforeDestroy(abort);
 
   return {
     isLoading,
@@ -93,7 +91,7 @@ export function useFetch(requestInfo, requestInit = {}) {
       signal
     });
     if (!res.ok) {
-      throw new Error(res);
+      throw res;
     }
     if (
       requestInit.headers &&

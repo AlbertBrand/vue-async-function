@@ -2,21 +2,16 @@
   "name": "vue-async-function",
   "version": "0.1.4",
   "description": "Vue.js async function helper",
-  "main": "./dist/index.js",
-  "browser": "./lib/index.js",
-  "module": "./module/index.js",
-  "scripts": {
-    "build-browser": "cross-env BABEL_ENV=browser babel ./src --out-dir ./lib --source-maps --copy-files",
-    "build-module": "cross-env BABEL_ENV=module babel ./src --out-dir ./module --source-maps --copy-files",
-    "build-node": "babel ./src --out-dir ./dist --source-maps --copy-files",
-    "build": "npm run build-node && npm run build-browser && npm run build-module",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "release:patch": "npm version patch && git push --follow-tags && npm run build && npm publish"
-  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlbertBrand/vue-async-function.git"
   },
+  "bugs": {
+    "url": "https://github.com/AlbertBrand/vue-async-function/issues"
+  },
+  "homepage": "https://github.com/AlbertBrand/vue-async-function#readme",
+  "author": "Albert Brand <abrand@xebia.com>",
   "keywords": [
     "vuejs",
     "vue",
@@ -24,21 +19,29 @@
     "function",
     "javascript"
   ],
-  "author": "Albert Brand <abrand@xebia.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/AlbertBrand/vue-async-function/issues"
-  },
-  "homepage": "https://github.com/AlbertBrand/vue-async-function#readme",
-  "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-preset-env": "1.7.0",
-    "cross-env": "5.2.0"
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel src --out-dir dist --source-maps",
+    "release:patch": "npm version patch && git push --follow-tags && npm run build && npm publish",
+    "release:minor": "npm version minor && git push --follow-tags && npm run build && npm publish",
+    "prepare": "npm run build",
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "peerDependencies": {
     "vue": "^2.6.10",
-    "vue-function-api": "^2.0.6"
+    "vue-function-api": "^2.1.1"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@vue/test-utils": "1.0.0-beta.29",
+    "babel-jest": "^24.8.0",
+    "flush-promises": "^1.0.2",
+    "jest": "24.8.0",
+    "vue": "^2.6.10",
+    "vue-function-api": "^2.1.1",
+    "vue-template-compiler": "^2.6.10"
+  }
 }
