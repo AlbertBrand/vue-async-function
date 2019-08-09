@@ -24,6 +24,7 @@
     "build": "babel src --out-dir dist --source-maps",
     "release:patch": "npm version patch && git push --follow-tags && npm run build && npm publish",
     "release:minor": "npm version minor && git push --follow-tags && npm run build && npm publish",
+    "release:major": "npm version major && git push --follow-tags && npm run build && npm publish",
     "prepare": "npm run build",
     "test": "jest",
     "test:cov": "jest --coverage"
