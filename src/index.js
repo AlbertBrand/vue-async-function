@@ -53,12 +53,12 @@ export function useAsync(promiseFn, params) {
       abort();
       isLoading.value = true;
       controller = new AbortController();
-      const { signal } = controller;
-      const result = await newPromiseFn(newParams, signal);
+      const result = await newPromiseFn(newParams, controller.signal);
       error.value = undefined;
       data.value = result;
     } catch (e) {
       error.value = e;
+      data.value = undefined;
     } finally {
       isLoading.value = false;
     }
@@ -86,16 +86,12 @@ export function useAsync(promiseFn, params) {
  */
 export function useFetch(requestInfo, requestInit = {}) {
   // always wrap arguments
-  const wrapRequestInfo = isWrapped(requestInfo)
-    ? requestInfo
-    : value(requestInfo);
-  const wrapRequestInit = isWrapped(requestInit)
-    ? requestInit
-    : value(requestInit);
+  const wrapReqInfo = isWrapped(requestInfo) ? requestInfo : value(requestInfo);
+  const wrapReqInit = isWrapped(requestInit) ? requestInit : value(requestInit);
 
   async function doFetch(params, signal) {
-    const requestInit = wrapRequestInit.value;
-    const res = await fetch(wrapRequestInfo.value, {
+    const requestInit = wrapReqInit.value;
+    const res = await fetch(wrapReqInfo.value, {
       ...requestInit,
       signal
     });
@@ -115,7 +111,7 @@ export function useFetch(requestInfo, requestInit = {}) {
   const wrapPromiseFn = value(doFetch);
 
   // watch for change in arguments, which triggers immediately initially
-  watch([wrapRequestInfo, wrapRequestInit], async () => {
+  watch([wrapReqInfo, wrapReqInit], async () => {
     // create a new promise and trigger watch
     wrapPromiseFn.value = async (params, signal) => doFetch(params, signal);
   });
