@@ -16,10 +16,10 @@
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/npm/l/vue-async-function.svg" alt="license">
   </a>
-  <a href="https://github.com/ghengeveld/vue-async-function/issues">
+  <a href="https://github.com/AlbertBrand/vue-async-function/issues">
     <img src="https://img.shields.io/github/issues/AlbertBrand/vue-async-function.svg" alt="issues">
   </a>
-  <a href="https://github.com/ghengeveld/vue-async-function/pulls">
+  <a href="https://github.com/AlbertBrand/vue-async-function/pulls">
     <img src="https://img.shields.io/github/issues-pr/AlbertBrand/vue-async-function.svg" alt="pull requests">
   </a>
 </p>
