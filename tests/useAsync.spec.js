@@ -175,4 +175,29 @@ describe("useAsync", () => {
 
     expect(promiseFn).toBeCalledTimes(2);
   });
+
+  it("resets error state when resolve directly follows reject", async () => {
+    let failReject, successResolve;
+    const failPromiseFn = () =>
+      new Promise((resolve, reject) => {
+        failReject = () => reject("error");
+      });
+    const successPromiseFn = () =>
+      new Promise(resolve => {
+        successResolve = () => resolve("success");
+      });
+    const wrapPromiseFn = value(failPromiseFn);
+    const Component = createComponentWithUseAsync(wrapPromiseFn);
+
+    const wrapper = shallowMount(Component);
+    wrapPromiseFn.value = successPromiseFn;
+    await wrapper.vm.$nextTick();
+    failReject();
+    successResolve();
+
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.isLoading).toBe(false);
+    expect(wrapper.vm.error).toBeUndefined();
+    expect(wrapper.vm.data).toBe("success");
+  });
 });

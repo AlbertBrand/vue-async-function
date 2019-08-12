@@ -56,6 +56,7 @@ export function useAsync(promiseFn, params) {
       controller = new AbortController();
       const { signal } = controller;
       const result = await newPromiseFn(newParams, signal);
+      error.value = undefined;
       data.value = result;
     } catch (e) {
       error.value = e;
