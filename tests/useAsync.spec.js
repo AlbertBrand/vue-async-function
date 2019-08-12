@@ -73,7 +73,7 @@ describe("useAsync", () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.isLoading).toBe(true);
-    expect(wrapper.vm.error).toBeUndefined();
+    expect(wrapper.vm.error).toBe("error");
     expect(wrapper.vm.data).toBeUndefined();
     expect(promiseFn).toBeCalledTimes(2);
 
@@ -199,5 +199,32 @@ describe("useAsync", () => {
     expect(wrapper.vm.isLoading).toBe(false);
     expect(wrapper.vm.error).toBeUndefined();
     expect(wrapper.vm.data).toBe("success");
+  });
+
+  it("sets mutually exclusive data or error", async () => {
+    const promiseFn = () => Promise.resolve("done");
+    const wrapPromiseFn = value(promiseFn);
+    const Component = createComponentWithUseAsync(wrapPromiseFn);
+
+    const wrapper = shallowMount(Component);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.isLoading).toBe(false);
+    expect(wrapper.vm.error).toBeUndefined();
+    expect(wrapper.vm.data).toBe("done");
+
+    wrapPromiseFn.value = () => Promise.reject("error");
+    await flushPromises();
+
+    expect(wrapper.vm.isLoading).toBe(false);
+    expect(wrapper.vm.error).toBe("error");
+    expect(wrapper.vm.data).toBeUndefined();
+
+    wrapPromiseFn.value = () => Promise.resolve("done");
+    await flushPromises();
+
+    expect(wrapper.vm.isLoading).toBe(false);
+    expect(wrapper.vm.error).toBeUndefined();
+    expect(wrapper.vm.data).toBe("done");
   });
 });

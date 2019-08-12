@@ -34,7 +34,6 @@ export function useAsync(promiseFn, params) {
 
   function abort() {
     isLoading.value = false;
-    error.value = undefined;
     if (controller !== null) {
       controller.abort();
     }
