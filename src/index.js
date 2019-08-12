@@ -85,8 +85,17 @@ export function useAsync(promiseFn, params) {
  * @returns {object} Object literal containing same return values as `useAsync`.
  */
 export function useFetch(requestInfo, requestInit = {}) {
+  // always wrap arguments
+  const wrapRequestInfo = isWrapped(requestInfo)
+    ? requestInfo
+    : value(requestInfo);
+  const wrapRequestInit = isWrapped(requestInit)
+    ? requestInit
+    : value(requestInit);
+
   async function doFetch(params, signal) {
-    const res = await fetch(requestInfo, {
+    const requestInit = wrapRequestInit.value;
+    const res = await fetch(wrapRequestInfo.value, {
       ...requestInit,
       signal
     });
@@ -102,5 +111,14 @@ export function useFetch(requestInfo, requestInit = {}) {
     return res.text();
   }
 
-  return useAsync(doFetch);
+  // wrap original fetch function in value
+  const wrapPromiseFn = value(doFetch);
+
+  // watch for change in arguments, which triggers immediately initially
+  watch([wrapRequestInfo, wrapRequestInit], async () => {
+    // create a new promise and trigger watch
+    wrapPromiseFn.value = async (params, signal) => doFetch(params, signal);
+  });
+
+  return useAsync(wrapPromiseFn);
 }
