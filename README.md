@@ -30,7 +30,9 @@ to handle all your asynchronous needs, in a similar fashion to the hooks functio
 [React Async](https://github.com/ghengeveld/react-async).
 
 - Works with promises, async/await and the Fetch API
+- Provides `abort` and `retry` functions
 - Supports abortable fetch by providing an AbortController signal
+- Reactive retry when arguments are value-wrapped
 
 ## Installation
 
@@ -237,5 +239,42 @@ in a `ValueWrapper` value as well as any parameter.
 </script>
 ```
 
-See the [vue-async-function-examples](https://github.com/AlbertBrand/vue-async-function-examples) repo for a demo
-project with all examples.
+## `useFetch` example with wrapped values
+
+```html
+<template>
+  <div id="root">
+    <h2>useFetch with value</h2>
+    <label>
+      Ship ID:
+      <input v-model="id" type="number" />
+    </label>
+    <button @click="retry">Retry</button>
+    <button @click="abort">Abort</button>
+    <div v-if="isLoading">Loading...</div>
+    <div v-else-if="error">Error!</div>
+    <pre v-else>{{ data }}</pre>
+  </div>
+</template>
+
+<script>
+  import { useFetch } from "vue-async-function";
+  import { value, computed } from "vue-function-api";
+
+  export default {
+    setup() {
+      const id = value(2);
+      const computedUrl = computed(
+        () => `https://swapi.co/api/starships/${id.value}/`
+      );
+      const headers = { Accept: "application/json" };
+      return {
+        id,
+        ...useFetch(computedUrl, { headers })
+      };
+    }
+  };
+</script>
+```
+
+See the [examples](examples) folder for a demo project with all examples.
