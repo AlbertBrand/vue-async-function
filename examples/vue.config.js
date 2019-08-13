@@ -1,5 +1,18 @@
 const path = require("path");
 
+// use vue-async-function sourcemap when generating source maps
+function addSourceMapLoader(config) {
+  config.module
+    .rule("source-map-loader")
+    .test(/\.js$/)
+    .enforce("pre")
+    .include.add(path.join(__dirname, "node_modules/vue-async-function"))
+    .end()
+    .use("source-map-loader")
+    .loader("source-map-loader")
+    .end();
+}
+
 module.exports = {
   configureWebpack: {
     devtool: "source-map",
@@ -14,5 +27,8 @@ module.exports = {
         )
       }
     }
+  },
+  chainWebpack: config => {
+    addSourceMapLoader(config);
   }
 };
