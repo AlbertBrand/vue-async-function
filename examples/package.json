@@ -8,10 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vue/composition-api": "^0.3.1",
     "core-js": "^2.6.5",
     "vue": "^2.6.10",
-    "vue-async-function": "file:..",
-    "vue-function-api": "^2.1.1"
+    "vue-async-function": "file:.."
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.10.0",

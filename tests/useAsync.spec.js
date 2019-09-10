@@ -4,8 +4,8 @@ import flushPromises from "flush-promises";
 
 // setup vue
 import Vue from "vue";
-import { plugin, value } from "vue-function-api";
-Vue.use(plugin);
+import VueCompositionApi, { ref } from "@vue/composition-api";
+Vue.use(VueCompositionApi);
 
 // component helper
 function createComponentWithUseAsync(promiseFn, params) {
@@ -128,8 +128,8 @@ describe("useAsync", () => {
   });
 
   it("accepts value wrapped arguments", async () => {
-    const promiseFn = value(async ({ msg }) => msg);
-    const params = value({ msg: "done" });
+    const promiseFn = ref(async ({ msg }) => msg);
+    const params = ref({ msg: "done" });
     const Component = createComponentWithUseAsync(promiseFn, params);
 
     const wrapper = shallowMount(Component);
@@ -142,7 +142,7 @@ describe("useAsync", () => {
 
   it("retries original promise when value wrapped promiseFn is changed", async () => {
     const promiseFn = async () => "done";
-    const wrapPromiseFn = value(promiseFn);
+    const wrapPromiseFn = ref(promiseFn);
     const Component = createComponentWithUseAsync(wrapPromiseFn);
     const wrapper = shallowMount(Component);
     await wrapper.vm.$nextTick();
@@ -186,7 +186,7 @@ describe("useAsync", () => {
       new Promise(resolve => {
         successResolve = () => resolve("success");
       });
-    const wrapPromiseFn = value(failPromiseFn);
+    const wrapPromiseFn = ref(failPromiseFn);
     const Component = createComponentWithUseAsync(wrapPromiseFn);
 
     const wrapper = shallowMount(Component);
@@ -203,7 +203,7 @@ describe("useAsync", () => {
 
   it("sets mutually exclusive data or error", async () => {
     const promiseFn = () => Promise.resolve("done");
-    const wrapPromiseFn = value(promiseFn);
+    const wrapPromiseFn = ref(promiseFn);
     const Component = createComponentWithUseAsync(wrapPromiseFn);
 
     const wrapper = shallowMount(Component);

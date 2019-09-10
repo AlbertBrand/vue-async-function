@@ -1,8 +1,4 @@
-import { value, watch, onBeforeDestroy } from "vue-function-api";
-
-function isWrapped(obj) {
-  return obj !== undefined && obj !== null && obj._internal instanceof Object;
-}
+import { ref, Ref, isRef, watch, onBeforeUnmount } from "@vue/composition-api";
 
 /**
  * Async helper function that returns three reactive values:
@@ -14,20 +10,20 @@ function isWrapped(obj) {
  * * `abort`, that aborts the current promise
  * * `retry`, that retries the original promise
  *
- * @param {function|ValueWrapper} promiseFn (optionally wrapped) function that returns a Promise.
- * @param {object|ValueWrapper} params (optionally wrapped) parameters passed as first argument to the promise function.
+ * @param {function|Ref} promiseFn (optionally ref to) function that returns a Promise.
+ * @param {object|Ref} params (optionally ref to) parameters passed as first argument to the promise function.
  * @returns {object} Object literal containing `isLoading`, `error` and `data` value wrappers and `abort` and `retry`
  * functions.
  */
-export function useAsync(promiseFn, params) {
+export function useAsync(promiseFn, params = undefined) {
   // always wrap arguments
-  const wrapPromiseFn = isWrapped(promiseFn) ? promiseFn : value(promiseFn);
-  const wrapParams = isWrapped(params) ? params : value(params);
+  const wrapPromiseFn = isRef(promiseFn) ? promiseFn : ref(promiseFn);
+  const wrapParams = isRef(params) ? params : ref(params);
 
   // create empty return values
-  const isLoading = value();
-  const error = value();
-  const data = value();
+  const isLoading = ref();
+  const error = ref();
+  const data = ref();
 
   // abort controller
   let controller = null;
@@ -64,7 +60,7 @@ export function useAsync(promiseFn, params) {
     }
   });
 
-  onBeforeDestroy(abort);
+  onBeforeUnmount(abort);
 
   return {
     isLoading,
@@ -80,14 +76,14 @@ export function useAsync(promiseFn, params) {
  * If the `Accept` header is set to `application/json` in the `requestInit` object, the response will be parsed as JSON,
  * else text.
  *
- * @param {string|object|ValueWrapper} requestInfo (optionally wrapped) URL or request object.
- * @param {object|ValueWrapper} requestInit (optionally wrapped) init parameters for the request.
+ * @param {string|object|Ref} requestInfo (optionally ref to) URL or request object.
+ * @param {object|Ref} requestInit (optionally ref to) init parameters for the request.
  * @returns {object} Object literal containing same return values as `useAsync`.
  */
 export function useFetch(requestInfo, requestInit = {}) {
   // always wrap arguments
-  const wrapReqInfo = isWrapped(requestInfo) ? requestInfo : value(requestInfo);
-  const wrapReqInit = isWrapped(requestInit) ? requestInit : value(requestInit);
+  const wrapReqInfo = isRef(requestInfo) ? requestInfo : ref(requestInfo);
+  const wrapReqInit = isRef(requestInit) ? requestInit : ref(requestInit);
 
   async function doFetch(params, signal) {
     const requestInit = wrapReqInit.value;
@@ -108,7 +104,7 @@ export function useFetch(requestInfo, requestInit = {}) {
   }
 
   // wrap original fetch function in value
-  const wrapPromiseFn = value(doFetch);
+  const wrapPromiseFn = ref(doFetch);
 
   // watch for change in arguments, which triggers immediately initially
   watch([wrapReqInfo, wrapReqInit], async () => {

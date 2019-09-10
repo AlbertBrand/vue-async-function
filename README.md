@@ -24,49 +24,50 @@
   </a>
 </p>
 
-Thanks to the [Vue Function API](https://github.com/vuejs/vue-function-api) plugin you can enjoy building next
-generation Vue apps today with Vue2.x. Vue Async Function builds upon the Function API and brings you simple helpers
-to handle all your asynchronous needs, in a similar fashion to the hooks functions of
-[React Async](https://github.com/ghengeveld/react-async).
+Thanks to the [Vue Composition API](https://vue-composition-api-rfc.netlify.com)
+[plugin](https://github.com/vuejs/composition-api) you can enjoy building next generation Vue apps today with Vue2.x.
+Vue Async Function builds upon the Composition API and brings you simple helpers to handle all your asynchronous needs,
+in a similar fashion to the hooks functions of [React Async](https://github.com/ghengeveld/react-async).
 
 - Works with promises, async/await and the Fetch API
 - Provides `abort` and `retry` functions
 - Supports abortable fetch by providing an AbortController signal
-- Reactive retry when arguments are value-wrapped
+- Reactive retry when arguments are `ref`-wrapped
 
 ## Installation
 
-In your Vue 2.x project, you'll need to install `vue-function-api` together with `vue-async-function`:
+In your Vue 2.x project, you'll need to install `@vue/composition-api` together with `vue-async-function`:
 
 ```bash
-npm install --save vue-function-api vue-async-function
+npm install --save @vue/composition-api vue-async-function
 ```
 
 Or with Yarn:
 
 ```bash
-yarn add vue-function-api vue-async-function
+yarn add @vue/composition-api vue-async-function
 ```
 
 Then modify your entrypoint (often `main.js` or `main.ts`), as stated in the
-[Vue Function API docs](https://github.com/vuejs/vue-function-api/blob/master/README.md#usage):
+[Vue Composition API docs](https://github.com/vuejs/composition-api#installation):
 
 ```javascript
 import Vue from "vue";
-import { plugin } from "vue-function-api";
+import VueCompositionApi from "@vue/composition-api";
 
-Vue.use(plugin);
+Vue.use(VueCompositionApi);
 ```
 
-After that, you can import `useAsync` and `useFetch`:
+After that, you can import `useAsync` or `useFetch`:
 
 ```javascript
 import { useAsync, useFetch } from "vue-async-function";
 ```
 
-Inside your `setup()` function you retrieve three reactive properties and return them to use in your template.
-You also get two functions, `retry` and `abort` that respectively retry the original function or abort the current
-running function. Retrying a function while the original asynchronous function is still running aborts it.
+When you call `useAsync` or `useFetch` inside your `setup()` function, you retrieve three reactive properties and return
+these to use in your template. You also get two functions, `retry` and `abort` that respectively retry the original
+asynchronous function or abort the current running function. Retrying a function while the original asynchronous
+function is still running aborts it.
 
 ```javascript
   setup() {
@@ -76,7 +77,7 @@ running function. Retrying a function while the original asynchronous function i
   }
 ```
 
-The second argument of `useFetch` is passed as first argument to the promise.
+The second argument of `useAsync` is passed as first argument to the promise.
 
 ```javascript
   setup() {
@@ -85,15 +86,15 @@ The second argument of `useFetch` is passed as first argument to the promise.
 ```
 
 If you want your application to reactively respond to changing input values for `useAsync` or `useFetch`, you can pass
-in a `ValueWrapper` value as well as any parameter.
+in a `ref` value as well as any parameter.
 
 ```javascript
-  import { value } from "vue-function-api";
+  import { ref } from "@vue/composition-api";
   // ...
 
   setup() {
-    const wrappedAsyncFunc = value(someAsyncFunc);
-    const wrappedParams = value({ id: 9000 });
+    const wrappedAsyncFunc = ref(someAsyncFunc);
+    const wrappedParams = ref({ id: 9000 });
     const { data, error, isLoading, retry, abort } = useAsync(someAsyncFunc);
     // ...
     watch(someVal, () => {
@@ -208,7 +209,7 @@ in a `ValueWrapper` value as well as any parameter.
 
 <script>
   import { useAsync } from "vue-async-function";
-  import { value, watch } from "vue-function-api";
+  import { ref, watch } from "@vue/composition-api";
 
   async function wait({ millis }, signal) {
     return new Promise(resolve => {
@@ -222,7 +223,7 @@ in a `ValueWrapper` value as well as any parameter.
 
   export default {
     setup(props) {
-      const wrapParams = value();
+      const wrapParams = ref();
       // watch incoming props change
       watch(
         () => props.ms,
@@ -259,11 +260,11 @@ in a `ValueWrapper` value as well as any parameter.
 
 <script>
   import { useFetch } from "vue-async-function";
-  import { value, computed } from "vue-function-api";
+  import { ref, computed } from "@vue/composition-api";
 
   export default {
     setup() {
-      const id = value(2);
+      const id = ref(2);
       const computedUrl = computed(
         () => `https://swapi.co/api/starships/${id.value}/`
       );

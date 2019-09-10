@@ -4,8 +4,8 @@ import flushPromises from "flush-promises";
 
 // setup vue
 import Vue from "vue";
-import { plugin, value } from "vue-function-api";
-Vue.use(plugin);
+import VueCompositionApi, { ref } from "@vue/composition-api";
+Vue.use(VueCompositionApi);
 
 // component helper
 function createComponentWithUseFetch(requestInfo, requestInit) {
@@ -94,8 +94,8 @@ describe("useFetch", () => {
     const requestInfo = "http://some-url.local";
     const requestInit = { headers: { Accept: "application/json" } };
     const Component = createComponentWithUseFetch(
-      value(requestInfo),
-      value(requestInit)
+      ref(requestInfo),
+      ref(requestInit)
     );
 
     const wrapper = shallowMount(Component);
@@ -109,7 +109,7 @@ describe("useFetch", () => {
 
   it("retries original promise when requestInfo argument changes", async () => {
     const requestInfo = "http://some-url.local";
-    const wrapRequestInfo = value(requestInfo);
+    const wrapRequestInfo = ref(requestInfo);
     const Component = createComponentWithUseFetch(wrapRequestInfo);
     const wrapper = shallowMount(Component);
     await flushPromises();
@@ -138,7 +138,7 @@ describe("useFetch", () => {
   it("retries original promise when requestInit argument changes", async () => {
     const requestInfo = "http://some-url.local";
     const requestInit = { headers: { Accept: "application/json" } };
-    const wrapRequestInit = value(requestInit);
+    const wrapRequestInit = ref(requestInit);
     const Component = createComponentWithUseFetch(requestInfo, wrapRequestInit);
     const wrapper = shallowMount(Component);
     await flushPromises();

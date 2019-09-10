@@ -15,11 +15,11 @@
 
 <script>
 import { useFetch } from "vue-async-function";
-import { value, computed } from "vue-function-api";
+import { ref, computed } from "@vue/composition-api";
 
 export default {
   setup() {
-    const id = value(2);
+    const id = ref(2);
     const computedUrl = computed(
       () => `https://swapi.co/api/starships/${id.value}/`
     );

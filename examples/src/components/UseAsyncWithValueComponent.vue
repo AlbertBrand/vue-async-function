@@ -11,7 +11,7 @@
 
 <script>
 import { useAsync } from "vue-async-function";
-import { value, watch } from "vue-function-api";
+import { ref, watch } from "@vue/composition-api";
 
 async function wait({ millis }, signal) {
   return new Promise(resolve => {
@@ -25,7 +25,7 @@ async function wait({ millis }, signal) {
 
 export default {
   setup(props) {
-    const wrapParams = value();
+    const wrapParams = ref();
     watch(
       () => props.ms,
       millis => {

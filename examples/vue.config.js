@@ -21,9 +21,9 @@ module.exports = {
       symlinks: false,
       alias: {
         vue: path.resolve(__dirname, "node_modules/vue"),
-        "vue-function-api": path.resolve(
+        "@vue/composition-api": path.resolve(
           __dirname,
-          "node_modules/vue-function-api"
+          "node_modules/@vue/composition-api"
         )
       }
     }
