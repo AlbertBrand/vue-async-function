@@ -1,6 +1,8 @@
+/.circleci
 /coverage
 /examples
 /img
 /tests
+.DS_Store
 .eslintrc.js
 babel.config.js
