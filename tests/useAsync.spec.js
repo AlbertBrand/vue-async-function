@@ -83,7 +83,7 @@ describe("useAsync", () => {
     expect(wrapper.vm.data).toBe("done");
   });
 
-  it("sends abort signal to promise when abort is called", async () => {
+  it("sends abort signal to promise when abort is called", () => {
     let aborted = false;
     const promiseFn = async (params, signal) => {
       signal.addEventListener("abort", () => {
@@ -150,13 +150,20 @@ describe("useAsync", () => {
     expect(wrapper.vm.error).toBeUndefined();
     expect(wrapper.vm.data).toBe("done");
 
-    wrapPromiseFn.value = async () => "done again";
+    let resolvePromise = () => {};
+    const newPromiseFn = () =>
+      new Promise(resolve => {
+        resolvePromise = () => resolve("done again");
+      });
+
+    wrapPromiseFn.value = newPromiseFn;
     await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.isLoading).toBe(true);
     expect(wrapper.vm.error).toBeUndefined();
     expect(wrapper.vm.data).toBe("done");
 
+    resolvePromise();
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.isLoading).toBe(false);
     expect(wrapper.vm.error).toBeUndefined();
