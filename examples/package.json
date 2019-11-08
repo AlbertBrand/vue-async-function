@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "@vue/composition-api": "^0.3.2",
-    "core-js": "^2.6.5",
+    "core-js": "^3.3.2",
     "vue": "^2.6.10",
     "vue-async-function": "file:.."
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.12.0",
-    "@vue/cli-plugin-eslint": "^3.12.0",
-    "@vue/cli-service": "^3.12.0",
+    "@vue/cli-plugin-babel": "^4.0.5",
+    "@vue/cli-plugin-eslint": "^4.0.5",
+    "@vue/cli-service": "4.0.5",
     "@vue/eslint-config-prettier": "^5.0.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.5.1",
