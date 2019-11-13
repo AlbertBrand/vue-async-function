@@ -21,7 +21,10 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel src --out-dir dist --source-maps",
+    "type-check": "tsc --noEmit",
+    "build": "npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir dist --extensions \".ts\" --source-maps",
     "release:patch": "npm version patch && git push --follow-tags && npm run build && npm publish",
     "release:minor": "npm version minor && git push --follow-tags && npm run build && npm publish",
     "release:major": "npm version major && git push --follow-tags && npm run build && npm publish",
@@ -39,6 +42,7 @@
     "@babel/core": "^7.7.2",
     "@babel/preset-env": "^7.7.1",
     "@babel/runtime-corejs3": "^7.7.2",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/jest": "^24.0.22",
     "@vue/composition-api": "^0.3.2",
     "@vue/test-utils": "^1.0.0-beta.29",
@@ -46,6 +50,7 @@
     "flush-promises": "^1.0.2",
     "jest": "^24.9.0",
     "vue": "^2.6.10",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "typescript": "^3.3.3"
   }
 }

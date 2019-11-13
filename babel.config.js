@@ -7,7 +7,8 @@ module.exports = {
         corejs: 3,
         useBuiltIns: "usage"
       }
-    ]
+    ],
+    "@babel/typescript"
   ],
   env: {
     test: {
@@ -19,7 +20,8 @@ module.exports = {
               node: "current"
             }
           }
-        ]
+        ],
+        "@babel/typescript"
       ]
     }
   }

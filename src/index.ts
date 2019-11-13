@@ -1,5 +1,18 @@
 import { ref, Ref, isRef, watch, onBeforeUnmount } from "@vue/composition-api";
 
+type AsyncFunction<T, P> = (
+  params: P | undefined,
+  signal: AbortSignal
+) => Promise<T>;
+
+type AsyncFunctionReturn<T> = {
+  isLoading: Ref<boolean>;
+  error: Ref<any>;
+  data: Ref<T | undefined>;
+  abort: () => void;
+  retry: () => void;
+};
+
 /**
  * Async helper function that returns three reactive values:
  * * `isLoading`, a boolean that is true during pending state;
@@ -10,28 +23,34 @@ import { ref, Ref, isRef, watch, onBeforeUnmount } from "@vue/composition-api";
  * * `abort`, that aborts the current promise
  * * `retry`, that retries the original promise
  *
- * @param {function|Ref} promiseFn (optionally ref to) function that returns a Promise.
- * @param {object|Ref} params (optionally ref to) parameters passed as first argument to the promise function.
- * @returns {object} Object literal containing `isLoading`, `error` and `data` value wrappers and `abort` and `retry`
+ * @param promiseFn (optionally ref to) function that returns a Promise.
+ * @param params (optionally ref to) parameters passed as first argument to the promise function.
+ * @returns Object literal containing `isLoading`, `error` and `data` value wrappers and `abort` and `retry`
  * functions.
  */
-export function useAsync(promiseFn, params = undefined) {
+export function useAsync<T, P>(
+  promiseFn: AsyncFunction<T, P> | Ref<AsyncFunction<T, P>>,
+  params?: P | Ref<P>
+): AsyncFunctionReturn<T> {
   // always wrap arguments
-  const wrapPromiseFn = isRef(promiseFn) ? promiseFn : ref(promiseFn);
-  const wrapParams = isRef(params) ? params : ref(params);
+  const wrapPromiseFn = isRef<AsyncFunction<T, P>>(promiseFn)
+    ? promiseFn
+    : ref<AsyncFunction<T, P>>(promiseFn);
+  const wrapParams: Ref<P> = isRef<P>(params) ? params : ref(params);
 
   // create empty return values
-  const isLoading = ref();
-  const error = ref();
-  const data = ref();
+  const isLoading = ref<boolean>(false);
+  const error = ref<any>();
+  const data = ref<T>();
 
   // abort controller
-  let controller = null;
+  let controller: AbortController | undefined;
 
   function abort() {
     isLoading.value = false;
-    if (controller !== null) {
+    if (controller !== undefined) {
       controller.abort();
+      controller = undefined;
     }
   }
 
@@ -44,7 +63,11 @@ export function useAsync(promiseFn, params = undefined) {
   }
 
   // watch for change in arguments, which triggers immediately initially
-  watch([wrapPromiseFn, wrapParams], async ([newPromiseFn, newParams]) => {
+  const watched: [typeof wrapPromiseFn, typeof wrapParams] = [
+    wrapPromiseFn,
+    wrapParams
+  ];
+  watch(watched, async ([newPromiseFn, newParams]) => {
     try {
       abort();
       isLoading.value = true;
@@ -76,16 +99,23 @@ export function useAsync(promiseFn, params = undefined) {
  * If the `Accept` header is set to `application/json` in the `requestInit` object, the response will be parsed as JSON,
  * else text.
  *
- * @param {string|object|Ref} requestInfo (optionally ref to) URL or request object.
- * @param {object|Ref} requestInit (optionally ref to) init parameters for the request.
- * @returns {object} Object literal containing same return values as `useAsync`.
+ * @param requestInfo (optionally ref to) URL or request object.
+ * @param requestInit (optionally ref to) init parameters for the request.
+ * @returns Object literal containing same return values as `useAsync`.
  */
-export function useFetch(requestInfo, requestInit = {}) {
+export function useFetch<T>(
+  requestInfo: RequestInfo | Ref<RequestInfo>,
+  requestInit: RequestInit | Ref<RequestInit> = {}
+): AsyncFunctionReturn<T> {
   // always wrap arguments
-  const wrapReqInfo = isRef(requestInfo) ? requestInfo : ref(requestInfo);
-  const wrapReqInit = isRef(requestInit) ? requestInit : ref(requestInit);
+  const wrapReqInfo = isRef<RequestInfo>(requestInfo)
+    ? requestInfo
+    : ref<RequestInfo>(requestInfo);
+  const wrapReqInit = isRef<RequestInit>(requestInit)
+    ? requestInit
+    : ref<RequestInit>(requestInit);
 
-  async function doFetch(params, signal) {
+  async function doFetch(params: undefined, signal: AbortSignal) {
     const requestInit = wrapReqInit.value;
     const res = await fetch(wrapReqInfo.value, {
       ...requestInit,
@@ -94,17 +124,17 @@ export function useFetch(requestInfo, requestInit = {}) {
     if (!res.ok) {
       throw res;
     }
-    if (
-      requestInit.headers &&
-      requestInit.headers.Accept === "application/json"
-    ) {
+
+    // TODO figure out how to use typed headers
+    const headers: any = requestInit.headers;
+    if (headers && headers.Accept === "application/json") {
       return res.json();
     }
     return res.text();
   }
 
   // wrap original fetch function in value
-  const wrapPromiseFn = ref(doFetch);
+  const wrapPromiseFn = ref<AsyncFunction<T, undefined>>(doFetch);
 
   // watch for change in arguments, which triggers immediately initially
   watch([wrapReqInfo, wrapReqInit], async () => {
