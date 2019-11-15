@@ -1,17 +1,14 @@
 import { ref, Ref, isRef, watch, onBeforeUnmount } from "@vue/composition-api";
 
-type AsyncFunction<T, P> = (
-  params: P | undefined,
-  signal: AbortSignal
-) => Promise<T>;
+type AsyncFunction<T, P> = (params: P, signal: AbortSignal) => Promise<T>;
 
-type AsyncFunctionReturn<T> = {
+interface AsyncFunctionReturn<T> {
   isLoading: Ref<boolean>;
   error: Ref<any>;
   data: Ref<T | undefined>;
   abort: () => void;
   retry: () => void;
-};
+}
 
 /**
  * Async helper function that returns three reactive values:

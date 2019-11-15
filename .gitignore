@@ -1,5 +1,3 @@
 node_modules
 dist
-lib
-module
-/coverage
+coverage
