@@ -11,14 +11,20 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-{{ checksum "lib/package.json" }}
             - v1-dependencies-
 
-      - run: npm install
+      - run:
+          name: npm install
+          command: npm install
+          working_directory: lib
 
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - lib/node_modules
+          key: v1-dependencies-{{ checksum "lib/package.json" }}
 
-      - run: npm test
+      - run:
+          name: npm test
+          command: npm test
+          working_directory: lib
