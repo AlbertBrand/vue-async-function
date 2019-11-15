@@ -6,3 +6,4 @@
 .DS_Store
 .eslintrc.js
 babel.config.js
+tsconfig.json
