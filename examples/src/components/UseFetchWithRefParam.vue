@@ -1,6 +1,6 @@
 <template>
   <div id="root">
-    <h2>useFetch with value</h2>
+    <h2>useFetch with ref param</h2>
     <label>
       Ship ID:
       <input v-model="id" type="number" />
@@ -13,11 +13,11 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { useFetch } from "vue-async-function";
-import { createComponent, ref, computed } from "@vue/composition-api";
+import { ref, computed } from "@vue/composition-api";
 
-export default createComponent({
+export default {
   setup() {
     const id = ref(2);
     const computedUrl = computed(
@@ -26,10 +26,10 @@ export default createComponent({
     const headers = { Accept: "application/json" };
     return {
       id,
-      ...useFetch<object>(computedUrl, { headers })
+      ...useFetch(computedUrl, { headers })
     };
   }
-});
+};
 </script>
 
 <style scoped>

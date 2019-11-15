@@ -2,28 +2,28 @@
   <div id="app">
     <button @click="show = !show">Show / hide components</button>
     <div v-if="show">
-      <SimpleUseAsyncComponent v-if="show" />
-      <UseAsyncComponent v-if="show" />
-      <UseFetchComponent v-if="show" />
+      <UseAsync v-if="show" />
+      <UseAsyncWithAbort v-if="show" />
+      <UseFetch v-if="show" />
       <label>
         Timeout in ms:
         <input v-model.number="ms" type="number" step="100" />
       </label>
-      <UseAsyncWithValueComponent :ms="ms" />
-      <UseFetchWithValueComponent />
+      <UseAsyncWithRefParam :ms="ms" />
+      <UseFetchWithRefParam />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import SimpleUseAsyncComponent from "./components/SimpleUseAsyncComponent.vue";
-import UseAsyncComponent from "./components/UseAsyncComponent.vue";
-import UseFetchComponent from "./components/UseFetchComponent.vue";
-import UseAsyncWithValueComponent from "./components/UseAsyncWithValueComponent.vue";
-import UseFetchWithValueComponent from "./components/UseFetchWithValueComponent.vue";
+<script>
+import { createComponent } from "@vue/composition-api";
+import UseAsync from "./components/UseAsync.vue";
+import UseAsyncWithAbort from "./components/UseAsyncWithAbort.vue";
+import UseFetch from "./components/UseFetch.vue";
+import UseAsyncWithRefParam from "./components/UseAsyncWithRefParam.vue";
+import UseFetchWithRefParam from "./components/UseFetchWithRefParam.vue";
 
-export default Vue.extend({
+export default createComponent({
   name: "app",
   data() {
     return {
@@ -32,11 +32,11 @@ export default Vue.extend({
     };
   },
   components: {
-    SimpleUseAsyncComponent,
-    UseAsyncComponent,
-    UseFetchComponent,
-    UseAsyncWithValueComponent,
-    UseFetchWithValueComponent
+    UseAsync,
+    UseAsyncWithAbort,
+    UseFetch,
+    UseAsyncWithRefParam,
+    UseFetchWithRefParam
   }
 });
 </script>

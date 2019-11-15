@@ -1,6 +1,6 @@
 <template>
   <div id="root">
-    <h2>useAsync and promises, with value</h2>
+    <h2>useAsync with ref param</h2>
     <button @click="retry">Retry</button>
     <button @click="abort">Abort</button>
     <div v-if="isLoading">Loading...</div>
@@ -9,16 +9,11 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { useAsync } from "vue-async-function";
-import { createComponent, ref, watch } from "@vue/composition-api";
+import { ref, watch } from "@vue/composition-api";
 
-type WaitParam = { millis: number };
-
-async function wait(
-  { millis }: WaitParam,
-  signal: AbortSignal
-): Promise<string> {
+async function wait({ millis }, signal) {
   return new Promise(resolve => {
     const timeout = setTimeout(
       () => resolve(`Done waiting ${millis} milliseconds!`),
@@ -28,12 +23,9 @@ async function wait(
   });
 }
 
-export default createComponent({
-  props: {
-    ms: { type: Number, required: true }
-  },
+export default {
   setup(props) {
-    const wrapParams = ref<WaitParam>(1000);
+    const wrapParams = ref();
     watch(
       () => props.ms,
       millis => {
@@ -42,8 +34,11 @@ export default createComponent({
     );
     const { data, error, isLoading, retry, abort } = useAsync(wait, wrapParams);
     return { data, error, isLoading, retry, abort };
+  },
+  props: {
+    ms: { type: Number, required: true }
   }
-});
+};
 </script>
 
 <style scoped>
