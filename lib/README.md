@@ -24,19 +24,25 @@
   </a>
 </p>
 
-Thanks to the [Vue Composition API](https://vue-composition-api-rfc.netlify.com)
-[plugin](https://github.com/vuejs/composition-api) you can enjoy building next generation Vue apps today with Vue2.x.
-Vue Async Function builds upon the Composition API and brings you simple helpers to handle all your asynchronous needs,
-in a similar fashion to the hooks functions of [React Async](https://github.com/ghengeveld/react-async).
+Vue Async Function delivers a compositional API for promise resolution and data fetching. It is inspired by the hooks
+functions of [React Async](https://github.com/ghengeveld/react-async) and builds upon the
+[Vue Composition API](https://vue-composition-api-rfc.netlify.com) that is coming with Vue 3.0. Luckily, thanks to
+[the official plugin](https://github.com/vuejs/composition-api) you can build Vue apps with the new Composition API
+today with Vue 2.5+.
 
 - Works with promises, async/await and the Fetch API
 - Provides `abort` and `retry` functions
 - Supports abortable fetch by providing an AbortController signal
 - Reactive retry when arguments are `ref`-wrapped
+- Written in TypeScript, ships with type definitions
 
 ## Installation
 
-In your Vue 2.x project, you'll need to install `@vue/composition-api` together with `vue-async-function`:
+The current version expects your project to be built with [vue-cli 4.0+](https://cli.vuejs.org). There's no support for
+previous verions. If your project is still built with 3.x, consider upgrading it. There's a detailed
+[upgrading guide](https://cli.vuejs.org/migrating-from-v3) available.
+
+In your Vue project, you need to install `@vue/composition-api` together with `vue-async-function`:
 
 ```bash
 npm install --save @vue/composition-api vue-async-function
@@ -64,50 +70,170 @@ After that, you can import `useAsync` or `useFetch`:
 import { useAsync, useFetch } from "vue-async-function";
 ```
 
-When you call `useAsync` or `useFetch` inside your `setup()` function, you retrieve three reactive properties and return
-these to use in your template. You also get two functions, `retry` and `abort` that respectively retry the original
-asynchronous function or abort the current running function. Retrying a function while the original asynchronous
-function is still running aborts it.
+## useAsync usage
+
+Inside your `setup()` function you can call `useAsync` and provide it a function that returns a Promise as its first
+argument. `useAsync` returns three ref-wrapped properties: `isLoading`, `error` and `data`. These are reactively updated
+to match the state of the asynchronous process while resolution takes place. You also get two functions, `retry` and
+`abort` that respectively retry the original asynchronous function or abort the current running function.
+
+You can choose to return any of these values to use them in the component template or pass them to other functions to
+'compose' your component. A simple example:
 
 ```javascript
+export default {
   setup() {
     const { data, error, isLoading, retry, abort } = useAsync(someAsyncFunc);
     // ...
     return { data, error, isLoading, retry, abort };
   }
+};
 ```
 
-The second argument of `useAsync` is passed as first argument to the promise.
+The second argument of `useAsync` is optional. If provided, it is passed as first argument to the Promise returning
+function.
 
 ```javascript
+export default {
   setup() {
     return useAsync(someAsyncFunc, { id: 9000 });
   }
+};
 ```
 
-If you want your application to reactively respond to changing input values for `useAsync` or `useFetch`, you can pass
-in a `ref` value as well as any parameter.
+### AbortController
+
+`useAsync` calls the asynchronous function for you with the optional first argument. Its second argument is an instance
+of an [AbortController signal](https://developer.mozilla.org/en-US/docs/Web/API/AbortController/signal). Your function
+should listen to the 'abort' event on the signal and cancel its behavior when triggered.
+
+In the following example, the `wait` function simply waits for a configurable period and then resolves to a string. If
+the `abort` function returned from the `useAsync` call is triggered, the timeout is cleared and the promise won't
+resolve. It is up to you to decide if the promise needs to be rejected as well.
 
 ```javascript
-  import { ref } from "@vue/composition-api";
-  // ...
+async function wait({ millis }, signal) {
+  return new Promise(resolve => {
+    const timeout = setTimeout(
+      () => resolve(`Done waiting ${millis} milliseconds!`),
+      millis
+    );
+    signal.addEventListener("abort", () => clearTimeout(timeout));
+  });
+}
 
+export default {
+  setup() {
+    return useAsync(wait, { millis: 10000 });
+  }
+};
+```
+
+Note: calling `retry` while the asynchronous function is not resolved calls `abort` as well.
+
+### Reactive arguments
+
+If you want your application to reactively respond to changing input values for `useAsync`, you can pass in a
+`ref`-wrapped value as well as any parameter.
+
+An example:
+
+```javascript
+import { ref } from "@vue/composition-api";
+// ...
+
+export default {
   setup() {
     const wrappedAsyncFunc = ref(someAsyncFunc);
     const wrappedParams = ref({ id: 9000 });
     const { data, error, isLoading, retry, abort } = useAsync(someAsyncFunc);
     // ...
     watch(someVal, () => {
-      wrappedAsyncFunc.value = async () => {}; // triggers retry
+      wrappedAsyncFunc.value = someOtherAsyncFunc; // triggers retry
       // or
-      wrappedParams.value = { id: 10000 } // triggers retry
-    })
+      wrappedParams.value = { id: 10000 }; // triggers retry
+    });
     // ...
     return { data, error, isLoading, retry, abort };
   }
+};
 ```
 
-## `useAsync` and `Promise` example
+Note that the triggered retry is the same as when you call `retry` explicitly, so it will also call `abort` for
+unresolved functions.
+
+## useFetch usage
+
+With `useAsync` you could wrap the Fetch API easily. An example:
+
+```javascript
+async function loadStarship({ id }, signal) {
+  const headers = { Accept: "application/json" };
+  const res = await fetch(`https://swapi.co/api/starships/${id}/`, {
+    headers,
+    signal
+  });
+  if (!res.ok) throw res;
+  return res.json();
+}
+
+export default {
+  setup() {
+    return useAsync(loadStarship, { id: 2 });
+  }
+};
+```
+
+This is such a common pattern that there is a special function for it: `useFetch`. We can implement above example as
+follows:
+
+```javascript
+import { useFetch } from "vue-async-function";
+
+export default {
+  setup() {
+    const id = 9;
+    const url = `https://swapi.co/api/starships/${id}/`;
+    const headers = { Accept: "application/json" };
+    return useFetch(url, { headers });
+  }
+};
+```
+
+`useFetch` accepts the same arguments as the browser Fetch API. It will hook up the `AbortController` signal for you and
+based on the `Accept` header it will choose between returning `text()` or `json()` results.
+
+### Reactive arguments
+
+Above example shines even more with reactive arguments:
+
+```javascript
+import { useFetch } from "vue-async-function";
+import { ref, computed } from "@vue/composition-api";
+
+export default {
+  setup() {
+    const id = ref(2);
+    const computedUrl = computed(
+      () => `https://swapi.co/api/starships/${id.value}/`
+    );
+    const headers = { Accept: "application/json" };
+    return {
+      id,
+      ...useFetch(computedUrl, { headers })
+    };
+  }
+};
+```
+
+Here, the `id` is made reactive. The `url` is also reactive, using the `computed` function that recomputes whenever any
+of the reactive values is changed. We return both the `id` and all of the results of `useFetch`. Now we can for instance
+bind the reactive `id` with `v-model` to an input field. Whenever the input field changes, it will cause the fetch to be
+retried, aborting the current fetch if unresolved.
+
+## Full examples
+
+### `useAsync` and `Promise` example
 
 ```html
 <template>
@@ -136,7 +262,7 @@ in a `ref` value as well as any parameter.
 </script>
 ```
 
-## `useAsync` and `fetch` example
+### `useAsync` and `fetch` example
 
 ```html
 <template>
@@ -168,7 +294,7 @@ in a `ref` value as well as any parameter.
 </script>
 ```
 
-## `useFetch` example
+### `useFetch` example
 
 ```html
 <template>
@@ -193,7 +319,7 @@ in a `ref` value as well as any parameter.
 </script>
 ```
 
-## `useAsync` example with wrapped values
+### `useAsync` example with wrapped values
 
 ```html
 <template>
@@ -240,7 +366,7 @@ in a `ref` value as well as any parameter.
 </script>
 ```
 
-## `useFetch` example with wrapped values
+### `useFetch` example with wrapped values
 
 ```html
 <template>
@@ -278,4 +404,5 @@ in a `ref` value as well as any parameter.
 </script>
 ```
 
-See the [examples](examples) folder for a demo project with all examples.
+See the [examples](../examples) folder for a demo project with all examples in JavaScript.
+See the [examples-ts](../examples-ts) folder for a demo project with all examples in TypeScript.
