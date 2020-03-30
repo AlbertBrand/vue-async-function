@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { createComponent } from "@vue/composition-api";
+import { defineComponent } from "@vue/composition-api";
 import { useAsync } from "vue-async-function";
 
 async function wait({ millis }: { millis: number }): Promise<string> {
@@ -17,7 +17,7 @@ async function wait({ millis }: { millis: number }): Promise<string> {
   });
 }
 
-export default createComponent({
+export default defineComponent({
   setup() {
     const { data, error, isLoading } = useAsync(wait, { millis: 2000 });
     return { data, error, isLoading };

@@ -16,14 +16,14 @@
 </template>
 
 <script>
-import { createComponent } from "@vue/composition-api";
+import { defineComponent } from "@vue/composition-api";
 import UseAsync from "./components/UseAsync.vue";
 import UseAsyncWithAbort from "./components/UseAsyncWithAbort.vue";
 import UseFetch from "./components/UseFetch.vue";
 import UseAsyncWithRefParam from "./components/UseAsyncWithRefParam.vue";
 import UseFetchWithRefParam from "./components/UseFetchWithRefParam.vue";
 
-export default createComponent({
+export default defineComponent({
   name: "app",
   data() {
     return {

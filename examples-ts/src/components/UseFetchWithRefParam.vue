@@ -15,9 +15,9 @@
 
 <script lang="ts">
 import { useFetch } from "vue-async-function";
-import { createComponent, ref, computed } from "@vue/composition-api";
+import { defineComponent, ref, computed } from "@vue/composition-api";
 
-export default createComponent({
+export default defineComponent({
   setup() {
     const id = ref(2);
     const computedUrl = computed(

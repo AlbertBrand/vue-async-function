@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { useAsync } from "vue-async-function";
-import { createComponent, ref, watch } from "@vue/composition-api";
+import { defineComponent, ref, watch } from "@vue/composition-api";
 
 type WaitParam = { millis: number };
 
@@ -28,7 +28,7 @@ async function wait(
   });
 }
 
-export default createComponent({
+export default defineComponent({
   props: {
     ms: { type: Number, required: true },
   },

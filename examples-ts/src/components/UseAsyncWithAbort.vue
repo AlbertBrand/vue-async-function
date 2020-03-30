@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { createComponent } from "@vue/composition-api";
+import { defineComponent } from "@vue/composition-api";
 import { useAsync } from "vue-async-function";
 
 async function loadStarship(
@@ -24,7 +24,7 @@ async function loadStarship(
   return res.json();
 }
 
-export default createComponent({
+export default defineComponent({
   setup() {
     const { data, error, isLoading } = useAsync(loadStarship, { id: 2 });
     return { data, error, isLoading };

@@ -10,10 +10,10 @@
 </template>
 
 <script lang="ts">
-import { createComponent } from "@vue/composition-api";
+import { defineComponent } from "@vue/composition-api";
 import { useFetch } from "vue-async-function";
 
-export default createComponent({
+export default defineComponent({
   setup() {
     const id = 9;
     const url = `https://swapi.co/api/starships/${id}/`;
