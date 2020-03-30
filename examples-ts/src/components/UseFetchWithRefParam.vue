@@ -26,9 +26,9 @@ export default createComponent({
     const headers = { Accept: "application/json" };
     return {
       id,
-      ...useFetch<object>(computedUrl, { headers })
+      ...useFetch<object>(computedUrl, { headers }),
     };
-  }
+  },
 });
 </script>
 

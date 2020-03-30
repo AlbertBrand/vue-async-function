@@ -24,11 +24,11 @@ module.exports = {
         "@vue/composition-api": path.resolve(
           __dirname,
           "node_modules/@vue/composition-api"
-        )
-      }
-    }
+        ),
+      },
+    },
   },
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     addSourceMapLoader(config);
-  }
+  },
 };

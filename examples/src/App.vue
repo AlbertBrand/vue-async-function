@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       show: true,
-      ms: 2000
+      ms: 2000,
     };
   },
   components: {
@@ -35,8 +35,8 @@ export default {
     UseAsyncWithAbort,
     UseFetch,
     UseAsyncWithRefParam,
-    UseFetchWithRefParam
-  }
+    UseFetchWithRefParam,
+  },
 };
 </script>
 

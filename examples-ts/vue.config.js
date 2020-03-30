@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("path"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 // use vue-async-function sourcemap when generating source maps
 function addSourceMapLoader(config) {
@@ -24,11 +24,11 @@ module.exports = {
         "@vue/composition-api": path.resolve(
           __dirname,
           "node_modules/@vue/composition-api"
-        )
-      }
-    }
+        ),
+      },
+    },
   },
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     addSourceMapLoader(config);
-  }
+  },
 };

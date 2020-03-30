@@ -19,7 +19,7 @@ export default {
     const headers = { Accept: "application/json" };
     const { data, error, isLoading, retry, abort } = useFetch(url, { headers });
     return { data, error, isLoading, retry, abort };
-  }
+  },
 };
 </script>
 

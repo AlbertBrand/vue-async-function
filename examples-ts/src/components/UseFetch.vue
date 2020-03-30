@@ -19,10 +19,10 @@ export default createComponent({
     const url = `https://swapi.co/api/starships/${id}/`;
     const headers = { Accept: "application/json" };
     const { data, error, isLoading, retry, abort } = useFetch<object>(url, {
-      headers
+      headers,
     });
     return { data, error, isLoading, retry, abort };
-  }
+  },
 });
 </script>
 

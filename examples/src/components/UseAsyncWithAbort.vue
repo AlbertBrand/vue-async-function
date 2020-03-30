@@ -14,7 +14,7 @@ async function loadStarship({ id }, signal) {
   const headers = { Accept: "application/json" };
   const res = await fetch(`https://swapi.co/api/starships/${id}/`, {
     headers,
-    signal
+    signal,
   });
   if (!res.ok) throw res;
   return res.json();
@@ -24,7 +24,7 @@ export default {
   setup() {
     const { data, error, isLoading } = useAsync(loadStarship, { id: 2 });
     return { data, error, isLoading };
-  }
+  },
 };
 </script>
 

@@ -14,7 +14,7 @@ import { useAsync } from "vue-async-function";
 import { ref, watch } from "@vue/composition-api";
 
 async function wait({ millis }, signal) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const timeout = setTimeout(
       () => resolve(`Done waiting ${millis} milliseconds!`),
       millis
@@ -28,7 +28,7 @@ export default {
     const wrapParams = ref();
     watch(
       () => props.ms,
-      millis => {
+      (millis) => {
         wrapParams.value = { millis };
       }
     );
@@ -36,8 +36,8 @@ export default {
     return { data, error, isLoading, retry, abort };
   },
   props: {
-    ms: { type: Number, required: true }
-  }
+    ms: { type: Number, required: true },
+  },
 };
 </script>
 

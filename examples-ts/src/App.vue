@@ -28,7 +28,7 @@ export default createComponent({
   data() {
     return {
       show: true,
-      ms: 2000
+      ms: 2000,
     };
   },
   components: {
@@ -36,8 +36,8 @@ export default createComponent({
     UseAsyncWithAbort,
     UseFetch,
     UseAsyncWithRefParam,
-    UseFetchWithRefParam
-  }
+    UseFetchWithRefParam,
+  },
 });
 </script>
 

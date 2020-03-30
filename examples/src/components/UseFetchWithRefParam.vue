@@ -26,9 +26,9 @@ export default {
     const headers = { Accept: "application/json" };
     return {
       id,
-      ...useFetch(computedUrl, { headers })
+      ...useFetch(computedUrl, { headers }),
     };
-  }
+  },
 };
 </script>
 
