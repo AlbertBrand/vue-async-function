@@ -29,7 +29,9 @@
     "release:minor": "npm version minor && git push --follow-tags && npm run build && npm publish",
     "release:major": "npm version major && git push --follow-tags && npm run build && npm publish",
     "prepare": "npm run build",
+    "lint": "eslint --fix src/** tests/** && prettier .*.js package.json tsconfig.json --write --loglevel warn",
     "test": "jest",
+    "test:lint": "eslint --max-warnings 0 src/** tests/** && prettier .*.js package.json tsconfig.json --check",
     "test:cov": "jest --coverage"
   },
   "peerDependencies": {
@@ -41,16 +43,21 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
-    "@babel/runtime-corejs3": "^7.9.2",
     "@babel/preset-typescript": "^7.9.0",
+    "@babel/runtime-corejs3": "^7.9.2",
     "@types/jest": "^25.1.4",
     "@vue/composition-api": "^0.5.0",
     "@vue/test-utils": "^1.0.0-beta.32",
+    "babel-eslint": "^10.1.0",
     "babel-jest": "^25.2.4",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "flush-promises": "^1.0.2",
     "jest": "^25.2.4",
+    "prettier": "^2.0.2",
+    "typescript": "^3.8.3",
     "vue": "^2.6.11",
-    "vue-template-compiler": "^2.6.11",
-    "typescript": "^3.8.3"
+    "vue-template-compiler": "^2.6.11"
   }
 }

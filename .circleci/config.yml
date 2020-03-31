@@ -25,6 +25,11 @@ jobs:
           key: v1-dependencies-{{ checksum "lib/package.json" }}
 
       - run:
+          name: npm test:lint
+          command: npm run test:lint
+          working_directory: lib
+
+      - run:
           name: npm test
           command: npm test
           working_directory: lib

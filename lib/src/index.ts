@@ -62,7 +62,7 @@ export function useAsync<T, P>(
   // watch for change in arguments, which triggers immediately initially
   const watched: [typeof wrapPromiseFn, typeof wrapParams] = [
     wrapPromiseFn,
-    wrapParams
+    wrapParams,
   ];
   watch(watched, async ([newPromiseFn, newParams]) => {
     try {
@@ -87,7 +87,7 @@ export function useAsync<T, P>(
     error,
     data,
     abort,
-    retry
+    retry,
   };
 }
 
@@ -116,7 +116,7 @@ export function useFetch<T>(
     const requestInit = wrapReqInit.value;
     const res = await fetch(wrapReqInfo.value, {
       ...requestInit,
-      signal
+      signal,
     });
     if (!res.ok) {
       throw res;
