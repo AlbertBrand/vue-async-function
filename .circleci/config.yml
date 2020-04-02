@@ -33,3 +33,8 @@ jobs:
           name: npm test
           command: npm test
           working_directory: lib
+
+      - run:
+          name: npm run build
+          command: npm run build
+          working_directory: lib

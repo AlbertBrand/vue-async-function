@@ -21,7 +21,6 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "npm run build",
     "type-check": "tsc --noEmit",
     "build": "npm run build:types && npm run build:js",
     "build:types": "tsc --emitDeclarationOnly",
